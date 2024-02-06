@@ -7,6 +7,23 @@ size = width, height = 400, 400
 screen = pygame.display.set_mode(size)
 
 
+def refresh(lo, la, scale):
+    params = {
+        "ll": ",".join([lo, la]),
+        "spn": ",".join([scale, scale]),
+        "l": "map",
+        "size": "400,400"
+    }
+    response = requests.get(api_server, params=params)
+    img1 = Image.open(BytesIO(
+        response.content))
+    img1.save("data/map.png")
+    img = load_image("map.png")
+    screen.fill((0, 0, 0))
+    screen.blit(img, (0, 0))
+    pygame.display.flip()
+
+
 def load_image(name, colorkey=None):
     fullname = os.path.join('data', name)
     # если файл не существует, то выходим
@@ -41,12 +58,26 @@ img1 = Image.open(BytesIO(
     response.content))
 img1.save("data/map.png")
 img = load_image("map.png")
+screen.fill((0, 0, 0))
 screen.blit(img, (0, 0))
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_PAGEDOWN:
+                if float(delta) > 0.0001:
+                    delta = str(float(delta) / 1.2)
+                    refresh(lon, lat, delta)
+                else:
+                    delta = "0.0001"
+            elif event.key == pygame.K_PAGEUP:
+                if float(delta) < 90:
+                    delta = str(float(delta) * 1.2)
+                    refresh(lon, lat, delta)
+                else:
+                    delta = "90"
 
     pygame.display.flip()
 pygame.quit()
