@@ -71,13 +71,25 @@ while running:
                     delta = str(float(delta) / 1.2)
                     refresh(lon, lat, delta)
                 else:
-                    delta = "0.0001"
+                    delta = "0.001"
             elif event.key == pygame.K_PAGEUP:
                 if float(delta) < 90:
                     delta = str(float(delta) * 1.2)
                     refresh(lon, lat, delta)
                 else:
                     delta = "90"
+            elif event.key == pygame.K_UP:
+                lat = str((float(lat) + (float(delta) / 2)) % 90)
+                refresh(lon, lat, delta)
+            elif event.key == pygame.K_DOWN:
+                lat = str((float(lat) - (float(delta) / 2)) % 90)
+                refresh(lon, lat, delta)
+            elif event.key == pygame.K_LEFT:
+                lon = str((float(lon) - (float(delta) / 2)) % 180)
+                refresh(lon, lat, delta)
+            elif event.key == pygame.K_RIGHT:
+                lon = str((float(lon) + (float(delta) / 2)) % 180)
+                refresh(lon, lat, delta)
 
     pygame.display.flip()
 pygame.quit()
